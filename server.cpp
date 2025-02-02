@@ -1,4 +1,4 @@
-// servidor.cpp
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
@@ -10,17 +10,16 @@
 #include <vector>
 #include <iomanip>
 
-// Enlazar con la librería Ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 
 const int PORT = 9111; // HE CAMBIADO EL PUERTO POR QUE NO ME FUNCIONABA EL DE LA PRACTICA 
 
-// Mutex para proteger el acceso al archivo y al contador de órdenes
+
 std::mutex fileMutex;
-// Contador de órdenes (variable atómica para seguridad en multihilo)
+
 std::atomic<int> orderCounter(0);
 
-// Función para gestionar la conexión de un cliente
+
 void handleClient(SOCKET clientSocket, std::string clientAddress) {
     const int BUFFER_SIZE = 1024;
     char buffer[BUFFER_SIZE] = {0};
@@ -36,17 +35,15 @@ void handleClient(SOCKET clientSocket, std::string clientAddress) {
     std::cout << ">> Conexión aceptada del cliente " << clientAddress << std::endl;
     std::cout << ">> Orden recibida: \"" << orderText << "\"" << std::endl;
 
-    // Incrementar el contador de órdenes de forma segura
     int orderNumber = ++orderCounter;
 
-    // Formatear el identificador de la orden: ORD-000X
     std::ostringstream oss;
     oss << "ORD-" << std::setw(4) << std::setfill('0') << orderNumber;
     std::string orderId = oss.str();
     std::cout << ">> Identificador asignado: " << orderId << std::endl;
 
     {
-        // Escribir la orden en el archivo de forma segura
+
         std::lock_guard<std::mutex> lock(fileMutex);
         std::ofstream outfile("comandas.txt", std::ios::app);
         if (!outfile.is_open()) {
@@ -58,14 +55,14 @@ void handleClient(SOCKET clientSocket, std::string clientAddress) {
         }
     }
 
-    // Enviar el identificador al cliente
+
     send(clientSocket, orderId.c_str(), orderId.size(), 0);
     closesocket(clientSocket);
     std::cout << ">> Conexión con " << clientAddress << " cerrada." << std::endl;
 }
 
 int main() {
-    // Inicializar Winsock
+
     WSADATA wsaData;
     int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (iResult != 0) {
@@ -73,7 +70,7 @@ int main() {
         return 1;
     }
 
-    // Crear el socket del servidor
+
     SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (serverSocket == INVALID_SOCKET) {
         std::cerr << "Error al crear el socket: " << WSAGetLastError() << std::endl;
@@ -81,7 +78,7 @@ int main() {
         return 1;
     }
 
-    // Configurar la dirección del servidor
+
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY; // Escucha en todas las interfaces
