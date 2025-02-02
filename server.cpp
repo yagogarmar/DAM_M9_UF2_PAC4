@@ -13,7 +13,7 @@
 // Enlazar con la librería Ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 
-const int PORT = 9111;
+const int PORT = 9111; // HE CAMBIADO EL PUERTO POR QUE NO ME FUNCIONABA EL DE LA PRACTICA 
 
 // Mutex para proteger el acceso al archivo y al contador de órdenes
 std::mutex fileMutex;
