@@ -1,2 +1,2 @@
 ORD-0001: "Hola mundo"
-ORD-0002: "Esto es una prueba"
+ORD-0002: "TEST2"
