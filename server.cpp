@@ -81,10 +81,9 @@ int main() {
 
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = INADDR_ANY; // Escucha en todas las interfaces
+    serverAddr.sin_addr.s_addr = INADDR_ANY; 
     serverAddr.sin_port = htons(PORT);
 
-    // Asignar la dirección al socket (bind)
     if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
         std::cerr << "Bind falló: " << WSAGetLastError() << std::endl;
         closesocket(serverSocket);
@@ -92,7 +91,7 @@ int main() {
         return 1;
     }
 
-    // Poner el socket en modo escucha
+
     if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR) {
         std::cerr << "Listen falló: " << WSAGetLastError() << std::endl;
         closesocket(serverSocket);
@@ -104,7 +103,7 @@ int main() {
 
     std::vector<std::thread> threads;
 
-    // Bucle para aceptar conexiones de clientes
+
     while (true) {
         sockaddr_in clientAddr;
         int clientAddrSize = sizeof(clientAddr);
@@ -114,18 +113,17 @@ int main() {
             continue;
         }
 
-        // Obtener la dirección IP del cliente
+
         char clientIP[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, INET_ADDRSTRLEN);
 
-        // Crear un hilo para gestionar la conexión del cliente
         threads.emplace_back(std::thread(handleClient, clientSocket, std::string(clientIP)));
         threads.back().detach();
 
         std::cout << ">> Esperando nuevas conexiones..." << std::endl;
     }
 
-    // Cerrar el socket del servidor y limpiar Winsock (nunca se llega aquí en este ejemplo)
+
     closesocket(serverSocket);
     WSACleanup();
     return 0;
